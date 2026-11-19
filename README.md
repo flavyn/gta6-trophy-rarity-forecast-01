@@ -1,3 +1,7 @@
+[![make.fun · gta6-trophy-rarity-forecast-01](https://make.fun/badge/gta6-trophy-rarity-forecast-01.svg)](https://make.fun/bounty/gta6-trophy-rarity-forecast-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-rarity-forecast-01)
+[![rank](https://make.fun/badge/gta6-trophy-rarity-forecast-01/flavyn/gta6-trophy-rarity-forecast-01/rank.svg)](https://make.fun/bounty/gta6-trophy-rarity-forecast-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-rarity-forecast-01)
+[![reward](https://make.fun/badge/gta6-trophy-rarity-forecast-01/flavyn/gta6-trophy-rarity-forecast-01/reward.svg)](https://make.fun/bounty/gta6-trophy-rarity-forecast-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-trophy-rarity-forecast-01)
+
 # RarityForecaster — `gta6-trophy-rarity-forecast-01`
 
 `main.ts` (Node 22, standard library only, no network) reads every `*.in` case in the input directory and writes one
@@ -31,6 +35,9 @@ a read repeats its predecessor byte for byte. On launch night the house saw the 
 4. **Width.** The band combines the measured spread of the trophies' own drifts (a robust MAD net of fit noise), the
    fit's noise, a prior that the regime changes, a random walk of 0.45 logit per square-root day, and a floor. A
    rate under 0.05% — one or two players on a small page — is widened further, since its count noise dominates.
+5. **The clamp edges.** A rate printed at 100.00% or 0.00% sits on the scorer's clamp, where the logit has no room
+   past the boundary and a refresh can only keep a trophy every tracked player holds where it is. Neither the
+   dilution prior nor the drift is applied there; the band covers the boundary's rounding alone.
 
 ## Measured
 

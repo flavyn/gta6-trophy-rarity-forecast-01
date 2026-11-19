@@ -68,6 +68,10 @@ const FLAT_SIGMA = 0.03;
 const FIT_WINDOW_HOURS = 30;
 /** A rate under this (percent) is one or two players on a small page: widen its band. */
 const RARE_RATE = 0.05;
+/** The band of a trophy printed at 100.00%, which a refresh can only keep where it is. */
+const CEIL_SIGMA = 0.35;
+/** The band of a trophy printed at 0.00%, which has no room to fall and may only gain its first players. */
+const FLOOR_SIGMA = 0.6;
 /** The most refreshes a no-history fallback assumes. */
 const MAX_PRIOR_REFRESHES = 2;
 
@@ -332,6 +336,18 @@ function forecastCase(c: Case): Array<{ id: number; q: number[] }> {
       sRef = Math.sqrt(
         REFRESH_DROP_SD * REFRESH_DROP_SD * assumed + RW_DAILY * RW_DAILY * hDays + SIGMA_FLOOR * SIGMA_FLOOR,
       );
+    }
+
+    // A rate printed at 100.00% or 0.00% sits on the scorer's clamp: the logit scale has no room past it, and a refresh
+    // can only keep a trophy every tracked player holds at 100% (the house saw exactly that on launch night: every rate
+    // but the one at 100% fell). The dilution prior is therefore not applied at either edge, and the band covers only
+    // the boundary's own rounding.
+    if (typeof rateNow === 'number' && rateNow >= 99.995) {
+      lRef = lNow;
+      sRef = Math.max(sRef, CEIL_SIGMA);
+    } else if (typeof rateNow === 'number' && rateNow <= 0.005) {
+      lRef = Math.max(lNow, lRef);
+      sRef = Math.max(sRef, FLOOR_SIGMA);
     }
 
     // One or two players on a small page: the count's own noise dominates.
